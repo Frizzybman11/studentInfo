@@ -1,6 +1,10 @@
 import sqlite3
 from sqlite3 import Error
 
+class Format:
+    end = '\033[0m'
+    underline = '\033[4m'
+
 def startMessage():
     print("Welcome to the student information management system! Please input the number of the command you would like to make.")
     print("1. Add/Edit a student entry")
@@ -12,12 +16,12 @@ def startMessage():
     
 def menuSelect(user_input):
     if user_input == "1":
-        print("\u0332".join("Students"))
-        print("Please select a command:")
+        print(Format.underline + "Students" + Format.end)
         print("1. Add a new student")
         print("2. Edit a current student")
         print("3. View all student entries")
-        print("4. Return to main menu")
+        print("4. Remove a student")
+        print("5. Return to main menu")
         user_input = input()
         if user_input == "1":
             addStudent()
@@ -27,25 +31,33 @@ def menuSelect(user_input):
             viewStudents()
             print("Press enter to return")
             input()
-            user_input = "1"
-            menuSelect(user_input)
+            menuSelect("1")
         elif user_input == "4":
+            removeStudent()
+        elif user_input == "5":
             user_input = startMessage()
             return
     elif user_input == "2":
-        print("\u0332".join("Courses"))
-        print("Please select a command:")
+        print(Format.underline + "Courses" + Format.end)
         print("1. Add a new course")
         print("2. Edit a current course")
         print("3. View all course entries")
+        print("4. Remove a course")
+        print("5. Return to main menu")
         user_input = input()
         if user_input == "1":
             addCourse()
         elif user_input == "2":
             editCourse()
+        elif user_input == "3":
+            viewCourses()
+        elif user_input == "4":
+            removeCourse()
+        elif user_input == "5":
+            user_input = startMessage()
+            return
     elif user_input == "3":
-        print("\u0332".join("Scores"))
-        print("Please select a command:")
+        print(Format.underline + "Scores" + Format.end)
         print("1. Add a new score")
         print("2. Edit a current score")
         print("3. View all score entries")
@@ -54,6 +66,13 @@ def menuSelect(user_input):
             addScore()
         elif user_input == "2":
             editScore()
+        elif user_input == "3":
+            viewScores()
+        elif user_input == "4":
+            removeCourse()
+        elif user_input == "5":
+            user_input = startMessage()
+            return
     else:
         print("Invalid command")
         user_input = input()
@@ -68,7 +87,7 @@ def addStudent():
     while(condition):
         user_input = input()
         if user_input.isalpha():
-            user_input.capitalize()
+            user_input = user_input.capitalize()
             newEntry.append(user_input)
             condition = False
         else:
@@ -78,7 +97,7 @@ def addStudent():
     while(condition):
         user_input = input()
         if user_input.isalpha():
-            user_input.capitalize()
+            user_input = user_input.capitalize()
             newEntry.append(user_input)
             condition = False
         else:
@@ -122,33 +141,44 @@ def addStudent():
     else:
         user_input = "1"
         menuSelect(user_input)
+        return
                
     
 def editStudent():
     condition = True
-    print("Please enter a student ID to edit entry. For a list of students, type 'view'")
+    print("Please enter a student ID to edit entry. For a list of students, type 'view'. To return, type 'return'.")
     while(condition):
         user_input = input()
         if user_input.isalpha():
             user_input = user_input.lower()
             if user_input == "view" or user_input == "v":
                 viewStudents()
-                print("Please enter a student ID to edit entry.")
+                print("Please enter a student ID to edit entry. To return, type 'return'.")
                 user_input = input()
                 if user_input.isnumeric():
-                    queryStudent(user_input)
+                    editStudentQuery(user_input)
                     condition = False
+                    return
+                elif user_input == "return" or user_input == "r":
+                    menuSelect("1")
+                    condition = False
+                    return
                 else:
                     print("Please enter a student ID number.")
+            elif user_input == "return" or user_input == "r":
+                menuSelect("1")
+                condition = False
+                return
             else:
                 print("Please enter a student ID to edit entry. For a list of students, type 'view'")
         elif user_input.isnumeric():
-            queryStudent(user_input)
-            condition = False  
+            editStudentQuery(user_input)
+            condition = False
+            return  
         else:
             print("Please enter a student ID to edit entry. For a list of students, type 'view'")
                                        
-def queryStudent(user_input):
+def editStudentQuery(user_input):
     first_name = ""
     last_name = ""
     grade = ""
@@ -170,31 +200,36 @@ def queryStudent(user_input):
         print("First Name: ")
         while(condition):
             user_input = input()
-            if not user_input.isalpha():
-                print("Name must contain alphabetic characters only.")
-            elif user_input:
-                first_name = user_input
-                condition = False
-            else:
+            if len(user_input) == 0:
                 first_name = student_entry[1]
+                condition = False
+            elif not user_input.isalpha():
+                print("Name must contain alphabetic characters only.")
+            else:
+                user_input = user_input.capitalize()
+                first_name = user_input
                 condition = False
         print("Last Name: ")
         condition = True
         while(condition):
             user_input = input()
-            if not user_input.isalpha():
-                print("Name must contain alphabetic characters only.")
-            elif user_input:
-                last_name = user_input
-                condition = False
-            else:
+            if len(user_input) == 0:
                 last_name = student_entry[2]
+                condition = False
+            elif not user_input.isalpha():
+                print("Name must contain alphabetic characters only.")
+            else:
+                user_input = user_input.capitalize()
+                last_name = user_input
                 condition = False
         print("Grade: ")
         condition = True
         while(condition):
             user_input = input()
-            if user_input.isnumeric():
+            if len(user_input) == 0:
+                grade = student_entry[3]
+                condition = False
+            elif user_input.isnumeric():
                 user_input = int(user_input)
                 if not user_input >= 1 and not user_input <= 6:
                     print("Grade must be between 1st and 6th.")
@@ -210,7 +245,10 @@ def queryStudent(user_input):
         condition = True
         while(condition):
             user_input = input()
-            if user_input.isalpha():
+            if len(user_input) == 0:
+                sex = student_entry[4]
+                condition = False
+            elif user_input.isalpha():
                 user_input = user_input.lower()
                 if user_input == "m" or user_input == "male":
                     sex = "M"
@@ -241,11 +279,59 @@ def queryStudent(user_input):
             print("Entry updated successfully!")
             print("Press enter to return")
             input()
-            user_input = "1"
-            menuSelect(user_input)
+            menuSelect("1")
+            return
         except Error as e:
             print(f"The error '{e}' occurred.")
-                   
+
+def removeStudent():
+    condition = True
+    print("Please enter a student ID. Confirmation required before removal. For a list of students, type 'view'")
+    while(condition):
+        user_input = input()
+        if user_input.isalpha():
+            user_input = user_input.lower()
+            if user_input == "view" or user_input == "v":
+                viewStudents()
+                print("Please enter a student ID.")
+                user_input = input()
+                if user_input.isnumeric():
+                    removeStudentQuery(user_input)
+                    condition = False
+                    return
+                else:
+                    print("Please enter a student ID number.")
+            else:
+                print("Please enter a student ID. For a list of students, type 'view'")
+        elif user_input.isnumeric():
+            removeStudentQuery(user_input)
+            condition = False
+            return  
+        else:
+            print("Please enter a student ID. For a list of students, type 'view'")
+    
+def removeStudentQuery(user_input):
+    student_id = user_input
+    select_students = "SELECT * from students WHERE id = "
+    students = executeReadQuery(connection, select_students + student_id)
+    for student in students:
+        print(student)
+    print("Are you sure you wish to remove this student entry? (y/n)")
+    user_input = input()
+    if user_input == "y" or user_input == "yes":
+        delete_student = "DELETE FROM students WHERE id = "
+        executeQuery(connection, delete_student + student_id)
+        print("Student entry removed!")
+        print("Press enter to return")
+        input()
+        menuSelect("1")
+        return
+    else:
+        print("Removal cancelled.")
+        print("Press enter to return")
+        input()
+        menuSelect("1")
+        return                   
     
 def viewStudents():
     select_students = "SELECT * from students"
@@ -253,6 +339,7 @@ def viewStudents():
     
     for student in students:
         print(student)
+    return
     
 def addCourse():
     print("WIP")
@@ -260,10 +347,22 @@ def addCourse():
 def editCourse():
     print("WIP")
     
+def viewCourses():
+    print("WIP")
+    
+def removeCourse():
+    print("WIP")
+    
 def addScore():
     print("WIP")
 
 def editScore():
+    print("WIP")
+    
+def viewScores():
+    print("WIP")
+
+def removeScore():
     print("WIP")  
     
 def createConnection(path):
