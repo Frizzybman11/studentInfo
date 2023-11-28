@@ -6,10 +6,10 @@ class Format:
     underline = '\033[4m'
 
 def startMessage():
-    print("Welcome to the student information management system! Please input the number of the command you would like to make.")
-    print("1. Add/Edit a student entry")
-    print("2. Add/Edit a course entry")
-    print("3. Add/Edit a score entry")
+    print("Welcome to the student information management system! Please input the number of the menu you would like to enter.")
+    print("1. Students")
+    print("2. Courses")
+    print("3. Scores")
     user_input = input()
     menuSelect(user_input)
     return
@@ -19,7 +19,7 @@ def menuSelect(user_input):
         print(Format.underline + "Students" + Format.end)
         print("1. Add a new student")
         print("2. Edit a current student")
-        print("3. View all student entries")
+        print("3. View student entries")
         print("4. Remove a student")
         print("5. Return to main menu")
         user_input = input()
@@ -29,9 +29,6 @@ def menuSelect(user_input):
             editStudent()
         elif user_input == "3":
             viewStudents()
-            print("Press enter to return")
-            input()
-            menuSelect("1")
         elif user_input == "4":
             removeStudent()
         elif user_input == "5":
@@ -41,7 +38,7 @@ def menuSelect(user_input):
         print(Format.underline + "Courses" + Format.end)
         print("1. Add a new course")
         print("2. Edit a current course")
-        print("3. View all course entries")
+        print("3. View course entries")
         print("4. Remove a course")
         print("5. Return to main menu")
         user_input = input()
@@ -60,7 +57,7 @@ def menuSelect(user_input):
         print(Format.underline + "Scores" + Format.end)
         print("1. Add a new score")
         print("2. Edit a current score")
-        print("3. View all score entries")
+        print("3. View score entries")
         user_input = input()
         if user_input == "1":
             addScore()
@@ -334,11 +331,43 @@ def removeStudentQuery(user_input):
         return                   
     
 def viewStudents():
-    select_students = "SELECT * from students"
-    students = executeReadQuery(connection, select_students)
+    print("To view all students, press enter. To view a specific grade, enter grade number. To return, type 'return'.")
+    condition = True
+    user_input = input()
+    while(condition):
+        if user_input == "return" or user_input == "r":
+            menuSelect("1")
+            condition = False
+            return
+        elif user_input.isnumeric():
+            if int(user_input) >= 1 and int(user_input) <= 6:
+                viewStudentsQuery(user_input)
+                condition = False
+                return
+            else:
+                print("Grade must be between 1st and 6th.")
+        else:
+            viewStudentsQuery(user_input)
+            condition = False
+            return
+                
     
-    for student in students:
-        print(student)
+def viewStudentsQuery(user_input):
+    if user_input.isnumeric():
+        student_id = user_input
+        select_students = "SELECT * from students WHERE grade = "
+        students = executeReadQuery(connection, select_students + student_id)
+    else:
+        select_students = "SELECT * from students"
+        students = executeReadQuery(connection, select_students)
+    if students:    
+        for student in students:
+            print(student)
+    else:
+        print("No students found.")
+    print("Press enter to return.")
+    input()
+    menuSelect("1")    
     return
     
 def addCourse():
