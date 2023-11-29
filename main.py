@@ -354,9 +354,10 @@ def viewStudents():
     
 def viewStudentsQuery(user_input):
     if user_input.isnumeric():
-        student_id = user_input
+        grade = user_input
         select_students = "SELECT * from students WHERE grade = "
-        students = executeReadQuery(connection, select_students + student_id)
+        select_students = select_students + grade
+        students = executeReadQuery(connection, select_students)
     else:
         select_students = "SELECT * from students"
         students = executeReadQuery(connection, select_students)
@@ -365,10 +366,48 @@ def viewStudentsQuery(user_input):
             print(student)
     else:
         print("No students found.")
-    print("Press enter to return.")
-    input()
-    menuSelect("1")    
-    return
+    print("To view sort commands, type 'sort'. To return, type 'return', or leave input blank and press enter.")
+    condition = True
+    while(condition):
+        user_input = input()
+        if user_input == "sort" or user_input == "s":
+            print("Input sort command:")
+            print("- id (default)")
+            print("- first : First Name (Ascending)")
+            print("- dfirst : First Name (Descending)")
+            print("- last : Last Name (Ascending)")
+            print("- dlast : Last Name (Descending)")
+        elif user_input == "id":
+            select_students_end = " ORDER BY id ASC"
+            students = executeReadQuery(connection, select_students + select_students_end)
+            for student in students:
+                print(student)
+        elif user_input == "first" or user_input == "f":
+            select_students_end = " ORDER BY fname ASC"
+            students = executeReadQuery(connection, select_students + select_students_end)
+            for student in students:
+                print(student)
+        elif user_input == "dfirst" or user_input == "df":
+            select_students_end = " ORDER BY fname DESC"
+            students = executeReadQuery(connection, select_students + select_students_end)
+            for student in students:
+                print(student)
+        elif user_input == "last" or user_input == "l":
+            select_students_end = " ORDER BY lname ASC"
+            students = executeReadQuery(connection, select_students + select_students_end)
+            for student in students:
+                print(student)
+        elif user_input == "dlast" or user_input == "dl":
+            select_students_end = " ORDER BY lname DESC"
+            students = executeReadQuery(connection, select_students + select_students_end)
+            for student in students:
+                print(student)
+        elif user_input == "return" or user_input == "r" or user_input == "":
+            menuSelect("1")
+            condition = False
+            return
+        else:
+            print("Invalid command")
     
 def addCourse():
     print("WIP")
