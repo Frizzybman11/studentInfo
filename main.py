@@ -1,12 +1,14 @@
 import sqlite3
 from sqlite3 import Error
+from os import system, name
 
 class Format:
     end = '\033[0m'
     underline = '\033[4m'
 
 def startMessage():
-    print("Welcome to the student information management system! Please input the number of the menu you would like to enter.")
+    clear()
+    print("Welcome to the student information system! Please input the number of the menu you would like to enter.")
     print("1. Students")
     print("2. Courses")
     print("3. Scores")
@@ -15,6 +17,7 @@ def startMessage():
     return
     
 def menuSelect(user_input):
+    clear()
     if user_input == "1":
         print(Format.underline + "Students" + Format.end)
         print("1. Add a new student")
@@ -24,14 +27,19 @@ def menuSelect(user_input):
         print("5. Return to main menu")
         user_input = input()
         if user_input == "1":
+            clear()
             addStudent()
         elif user_input == "2":
+            clear()
             editStudent()
         elif user_input == "3":
+            clear()
             viewStudents()
         elif user_input == "4":
+            clear()
             removeStudent()
         elif user_input == "5":
+            clear()
             user_input = startMessage()
             return
     elif user_input == "2":
@@ -133,10 +141,12 @@ def addStudent():
     user_input = input()
     user_input = user_input.lower()
     if user_input == "y" or user_input == "yes":
+        clear()
         addStudent()
         return
     else:
         user_input = "1"
+        clear()
         menuSelect(user_input)
         return
                
@@ -149,7 +159,8 @@ def editStudent():
         if user_input.isalpha():
             user_input = user_input.lower()
             if user_input == "view" or user_input == "v":
-                viewStudents()
+                clear()
+                editStudentView()
                 print("Please enter a student ID to edit entry. To return, type 'return'.")
                 user_input = input()
                 if user_input.isnumeric():
@@ -174,6 +185,13 @@ def editStudent():
             return  
         else:
             print("Please enter a student ID to edit entry. For a list of students, type 'view'")
+            
+def editStudentView():
+    select_students = "SELECT * from students"
+    students = executeReadQuery(connection, select_students)
+    for student in students:
+        print(student)
+    return
                                        
 def editStudentQuery(user_input):
     first_name = ""
@@ -283,7 +301,7 @@ def editStudentQuery(user_input):
 
 def removeStudent():
     condition = True
-    print("Please enter a student ID. Confirmation required before removal. For a list of students, type 'view'")
+    print("Please enter a student ID for removal. For a list of students, type 'view'. To return, type 'return'.")
     while(condition):
         user_input = input()
         if user_input.isalpha():
@@ -298,6 +316,10 @@ def removeStudent():
                     return
                 else:
                     print("Please enter a student ID number.")
+            elif user_input == 'return' or user_input =='r':
+                menuSelect("1")
+                condition = False
+                return
             else:
                 print("Please enter a student ID. For a list of students, type 'view'")
         elif user_input.isnumeric():
@@ -458,6 +480,12 @@ def executeReadQuery(connection, query):
         return result
     except Error as e:
         print(f"The error '{e}' occurred")
+        
+def clear():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
 
 connection = createConnection("./student_info.sqlite")
 create_students_table = """
