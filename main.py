@@ -66,6 +66,8 @@ def menuSelect(user_input):
         print("1. Add a new score")
         print("2. Edit a current score")
         print("3. View score entries")
+        print("4. Remove a score")
+        print("5. Return to main menu")
         user_input = input()
         if user_input == "1":
             addScore()
@@ -74,7 +76,7 @@ def menuSelect(user_input):
         elif user_input == "3":
             viewScores()
         elif user_input == "4":
-            removeCourse()
+            removeScore()
         elif user_input == "5":
             user_input = startMessage()
             return
@@ -433,27 +435,43 @@ def viewStudentsQuery(user_input):
     
 def addCourse():
     print("WIP")
+    input()
+    menuSelect("2")
     
 def editCourse():
     print("WIP")
+    input()
+    menuSelect("2")
     
 def viewCourses():
     print("WIP")
+    input()
+    menuSelect("2")
     
 def removeCourse():
     print("WIP")
+    input()
+    menuSelect("2")
     
 def addScore():
     print("WIP")
+    input()
+    menuSelect("3")
 
 def editScore():
     print("WIP")
+    input()
+    menuSelect("3")
     
 def viewScores():
     print("WIP")
+    input()
+    menuSelect("3")
 
 def removeScore():
-    print("WIP")  
+    print("WIP")
+    input()
+    menuSelect("3")  
     
 def createConnection(path):
     connection = None
