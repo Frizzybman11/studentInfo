@@ -39,7 +39,6 @@ def menuSelect(user_input):
             clear()
             removeStudent()
         elif user_input == "5":
-            clear()
             user_input = startMessage()
             return
     elif user_input == "2":
@@ -51,12 +50,16 @@ def menuSelect(user_input):
         print("5. Return to main menu")
         user_input = input()
         if user_input == "1":
+            clear()
             addCourse()
         elif user_input == "2":
+            clear()
             editCourse()
         elif user_input == "3":
+            clear()
             viewCourses()
         elif user_input == "4":
+            clear()
             removeCourse()
         elif user_input == "5":
             user_input = startMessage()
@@ -434,9 +437,27 @@ def viewStudentsQuery(user_input):
             print("Invalid command")
     
 def addCourse():
-    print("WIP")
-    input()
-    menuSelect("2")
+    newEntry = []
+    print("Please enter new course name:")
+    user_input = input()
+    if user_input:
+        user_input = user_input.capitalize()
+        newEntry.append(user_input)
+        values = ", ".join(f"'{value}'" for value in newEntry)
+        executeQuery(connection, create_course+"("+values+")")
+        print("Add another course? (y/n)")
+        user_input = input()
+        if user_input == "y" or user_input == "yes":
+            clear()
+            addCourse()
+            return
+        else:
+            menuSelect("2")
+            return
+    else:
+        menuSelect("2")
+        return
+        
     
 def editCourse():
     print("WIP")
@@ -444,9 +465,20 @@ def editCourse():
     menuSelect("2")
     
 def viewCourses():
-    print("WIP")
-    input()
-    menuSelect("2")
+    select_courses = "SELECT * from courses"
+    print("To view all courses, press enter. To return, type 'return'.")
+    user_input = input()
+    if user_input == "return" or user_input == "r":
+        menuSelect("2")
+        return
+    else:
+        courses = executeReadQuery(connection, select_courses)
+        for course in courses:
+            print(course)
+        print("Press enter to return")
+        input()
+        menuSelect("2")
+        return
     
 def removeCourse():
     print("WIP")
